@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: tjrj_testing
+          POSTGRES_USER: tjrj
+          POSTGRES_PASSWORD: tjrj
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo, pdo_pgsql
+          coverage: xdebug
+
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Copy .env
+        working-directory: backend
+        run: cp .env.example .env
+
+      - name: Generate app key
+        working-directory: backend
+        run: php artisan key:generate
+
+      - name: Run tests with coverage
+        working-directory: backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: tjrj_testing
+          DB_USERNAME: tjrj
+          DB_PASSWORD: tjrj
+        run: php artisan test --coverage --min=80
