@@ -5,6 +5,7 @@ const cards = [
   { to: '/livros', icon: '📖', title: 'Livros', desc: 'Cadastro e consulta de livros' },
   { to: '/autores', icon: '✍️', title: 'Autores', desc: 'Gerenciar autores' },
   { to: '/assuntos', icon: '🏷️', title: 'Assuntos', desc: 'Gerenciar assuntos' },
+  { to: '/relatorio', icon: '📊', title: 'Relatório', desc: 'Livros agrupados por autor' },
 ]
 </script>
 
