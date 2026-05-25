@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('autores', function (Blueprint $table): void {
             $table->increments('cod_au');
-            $table->string('nome', 40);
+            $table->string('nome', 40)->unique();
         });
     }
 
