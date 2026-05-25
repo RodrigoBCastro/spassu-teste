@@ -16,11 +16,22 @@
                 "tags": [
                     "Assuntos"
                 ],
-                "summary": "Listar assuntos",
+                "summary": "Listar assuntos (paginado)",
                 "operationId": "b65bfc4a125a8df880e922c685bb247b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de assuntos",
+                        "description": "Lista paginada de assuntos",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -30,6 +41,9 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/Assunto"
                                             }
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -73,6 +87,35 @@
                     },
                     "422": {
                         "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/assuntos/todos": {
+            "get": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Listar todos os assuntos sem paginação",
+                "operationId": "725815141efef0577a02321889a450b2",
+                "responses": {
+                    "200": {
+                        "description": "Lista completa de assuntos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Assunto"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -199,11 +242,22 @@
                 "tags": [
                     "Autores"
                 ],
-                "summary": "Listar autores",
+                "summary": "Listar autores (paginado)",
                 "operationId": "eb27430fea956ab5ff5aaca0e1355868",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de autores",
+                        "description": "Lista paginada de autores",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -213,6 +267,9 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/Autor"
                                             }
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -256,6 +313,35 @@
                     },
                     "422": {
                         "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/autores/todos": {
+            "get": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Listar todos os autores sem paginação",
+                "operationId": "436af2b566b352a15365bb01233009e7",
+                "responses": {
+                    "200": {
+                        "description": "Lista completa de autores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Autor"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -382,11 +468,22 @@
                 "tags": [
                     "Livros"
                 ],
-                "summary": "Listar livros",
+                "summary": "Listar livros (paginado)",
                 "operationId": "c2638f778b25c161b5b8189172216b67",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de livros",
+                        "description": "Lista paginada de livros",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -396,6 +493,9 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/Livro"
                                             }
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -439,6 +539,35 @@
                     },
                     "422": {
                         "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/livros/todos": {
+            "get": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Listar todos os livros sem paginação",
+                "operationId": "768baaae056fa3d9902c5e0715232b2b",
+                "responses": {
+                    "200": {
+                        "description": "Lista completa de livros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Livro"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }

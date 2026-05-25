@@ -17,14 +17,28 @@ class AutorController extends Controller
         private readonly AutorService $service,
     ) {}
 
-    #[OA\Get(path: '/autores', summary: 'Listar autores', tags: ['Autores'],
-        responses: [new OA\Response(response: 200, description: 'Lista de autores',
+    #[OA\Get(path: '/autores', summary: 'Listar autores (paginado)', tags: ['Autores'],
+        parameters: [new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1))],
+        responses: [new OA\Response(response: 200, description: 'Lista paginada de autores',
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Autor')),
+                new OA\Property(property: 'meta', type: 'object'),
+            ])
+        )]
+    )]
+    public function index(): AnonymousResourceCollection
+    {
+        return AutorResource::collection($this->service->listar());
+    }
+
+    #[OA\Get(path: '/autores/todos', summary: 'Listar todos os autores sem paginação', tags: ['Autores'],
+        responses: [new OA\Response(response: 200, description: 'Lista completa de autores',
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Autor')),
             ])
         )]
     )]
-    public function index(): AnonymousResourceCollection
+    public function todos(): AnonymousResourceCollection
     {
         return AutorResource::collection($this->service->listarTodos());
     }

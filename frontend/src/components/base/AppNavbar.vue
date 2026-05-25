@@ -10,6 +10,7 @@ import { RouterLink } from 'vue-router'
       <li><RouterLink to="/autores">Autores</RouterLink></li>
       <li><RouterLink to="/assuntos">Assuntos</RouterLink></li>
       <li><RouterLink to="/relatorio">Relatório</RouterLink></li>
+      <li><a href="/api/documentation" target="_blank" rel="noopener">API Docs</a></li>
     </ul>
   </nav>
 </template>

@@ -14,8 +14,9 @@ readonly class AutorService
         private AutorRepositoryContract $repository,
     ) {}
 
-    public function listar(int $perPage = 15): LengthAwarePaginator
+    public function listar(): LengthAwarePaginator
     {
+        $perPage = request()->integer('per_page', 15);
         return $this->repository->paginate($perPage);
     }
 

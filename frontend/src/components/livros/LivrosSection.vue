@@ -4,12 +4,13 @@ import { useLivros } from '@/composables/useLivros'
 import { useAutores } from '@/composables/useAutores'
 import { useAssuntos } from '@/composables/useAssuntos'
 import { useNotification } from '@/composables/useNotification'
+import DataTable from '@/components/base/DataTable.vue'
 import LivroModal from './LivroModal.vue'
 import ConfirmModal from '@/components/base/ConfirmModal.vue'
 
-const { livros, pagination, loading, fetchAll, create, update, remove } = useLivros()
-const { autores, fetchAll: fetchAutores } = useAutores()
-const { assuntos, fetchAll: fetchAssuntos } = useAssuntos()
+const { livros, pagination, loading, fetchPaginado, create, update, remove } = useLivros()
+const { autores, fetchTodos: fetchAutores } = useAutores()
+const { assuntos, fetchTodos: fetchAssuntos } = useAssuntos()
 const { notify } = useNotification()
 
 const showModal = ref(false)
@@ -17,8 +18,18 @@ const showConfirm = ref(false)
 const editing = ref(null)
 const deletingId = ref(null)
 
+const columns = [
+  { key: 'titulo', label: 'Título' },
+  { key: 'editora', label: 'Editora' },
+  { key: 'edicao', label: 'Ed.', width: '60px' },
+  { key: 'ano_publicacao', label: 'Ano', width: '70px' },
+  { key: 'valor', label: 'Valor', width: '110px' },
+  { key: 'autores', label: 'Autores' },
+  { key: 'assuntos', label: 'Assuntos' },
+]
+
 onMounted(async () => {
-  await Promise.all([fetchAll(), fetchAutores(), fetchAssuntos()])
+  await Promise.all([fetchPaginado(), fetchAutores(), fetchAssuntos()])
 })
 
 function openCreate() {
@@ -62,91 +73,51 @@ async function onConfirmDelete() {
 function formatCurrency(val) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
 }
-
-async function goToPage(page) {
-  await fetchAll(page)
-}
 </script>
 
 <template>
   <div>
     <div class="section-header">
       <h4>Livros</h4>
-      <button class="btn btn-primary btn-sm" title="Adicionar" @click="openCreate"><span class="mdi mdi-plus"></span></button>
+      <button class="btn btn-primary btn-sm" title="Adicionar" @click="openCreate">
+        <span class="mdi mdi-plus"></span>
+      </button>
     </div>
 
-    <div v-if="loading" class="loading-state">Carregando...</div>
+    <DataTable
+      :columns="columns"
+      :rows="livros"
+      :pagination="pagination"
+      :loading="loading"
+      empty-message="Nenhum livro cadastrado."
+      @page-change="(page) => fetchPaginado(page)"
+      @per-page-change="(perPage) => fetchPaginado(1, perPage)"
+    >
+      <template #cell-edicao="{ value }">{{ value }}ª</template>
 
-    <div v-else-if="livros.length === 0" class="empty-state">
-      Nenhum livro cadastrado.
-    </div>
+      <template #cell-valor="{ value }">{{ formatCurrency(value) }}</template>
 
-    <template v-else>
-      <div class="table-wrapper">
-        <table class="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Editora</th>
-              <th>Ed.</th>
-              <th>Ano</th>
-              <th>Valor</th>
-              <th>Autores</th>
-              <th>Assuntos</th>
-              <th class="text-end">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="livro in livros" :key="livro.id">
-              <td>{{ livro.titulo }}</td>
-              <td>{{ livro.editora }}</td>
-              <td>{{ livro.edicao }}ª</td>
-              <td>{{ livro.ano_publicacao }}</td>
-              <td>{{ formatCurrency(livro.valor) }}</td>
-              <td>
-                <div class="tag-list">
-                  <span v-for="a in livro.autores" :key="a.id" class="tag">{{ a.nome }}</span>
-                </div>
-              </td>
-              <td>
-                <div class="tag-list">
-                  <span v-for="s in livro.assuntos" :key="s.id" class="tag">{{ s.descricao }}</span>
-                </div>
-              </td>
-              <td class="text-end" style="white-space:nowrap">
-                <button class="btn-action btn btn-sm btn-outline-secondary me-1" title="Editar" @click="openEdit(livro)">
-                  <span class="mdi mdi-pencil-outline"></span>
-                </button>
-                <button class="btn-action btn btn-sm btn-outline-danger" title="Excluir" @click="askDelete(livro.id)">
-                  <span class="mdi mdi-trash-can-outline"></span>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <template #cell-autores="{ value }">
+        <div class="tag-list">
+          <span v-for="a in value" :key="a.id" class="tag">{{ a.nome }}</span>
+        </div>
+      </template>
 
-      <div v-if="pagination && pagination.last_page > 1" class="d-flex justify-content-center mt-3 no-print">
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: pagination.current_page === 1 }">
-              <button class="page-link" @click="goToPage(pagination.current_page - 1)">‹</button>
-            </li>
-            <li
-              v-for="p in pagination.last_page"
-              :key="p"
-              class="page-item"
-              :class="{ active: p === pagination.current_page }"
-            >
-              <button class="page-link" @click="goToPage(p)">{{ p }}</button>
-            </li>
-            <li class="page-item" :class="{ disabled: pagination.current_page === pagination.last_page }">
-              <button class="page-link" @click="goToPage(pagination.current_page + 1)">›</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </template>
+      <template #cell-assuntos="{ value }">
+        <div class="tag-list">
+          <span v-for="s in value" :key="s.id" class="tag">{{ s.descricao }}</span>
+        </div>
+      </template>
+
+      <template #actions="{ row }">
+        <button class="dt-btn-action" title="Editar" @click="openEdit(row)">
+          <span class="mdi mdi-pencil-outline"></span>
+        </button>
+        <button class="dt-btn-action dt-btn-action--danger" title="Excluir" @click="askDelete(row.id)">
+          <span class="mdi mdi-trash-can-outline"></span>
+        </button>
+      </template>
+    </DataTable>
 
     <LivroModal
       v-if="showModal"
@@ -156,8 +127,6 @@ async function goToPage(page) {
       @save="onSave"
       @cancel="showModal = false"
     />
-
-    <ConfirmModal v-if="showConfirm" @confirm="onConfirmDelete" @cancel="showConfirm = false"
-    />
+    <ConfirmModal v-if="showConfirm" @confirm="onConfirmDelete" @cancel="showConfirm = false" />
   </div>
 </template>

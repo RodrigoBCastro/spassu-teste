@@ -18,6 +18,40 @@
   transform: translateY(0);
 }
 
+.dt-btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+  margin-left: 0.3rem;
+}
+
+.dt-btn-action:hover {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.dt-btn-action:active {
+  transform: translateY(0);
+}
+
+.dt-btn-action--danger:hover {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #fff;
+}
+
 .table-wrapper {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);

@@ -4,13 +4,16 @@ import { useNotification } from './useNotification'
 
 export function useAutores() {
   const autores = ref([])
+  const pagination = ref(null)
   const loading = ref(false)
   const { notify } = useNotification()
 
-  async function fetchAll() {
+  async function fetchPaginado(page = 1, perPage = pagination.value?.per_page ?? 15) {
     loading.value = true
     try {
-      autores.value = await api.getAll()
+      const res = await api.getPaginado(page, perPage)
+      autores.value = res.data
+      pagination.value = res.meta
     } catch {
       notify('Erro ao carregar autores.', 'error')
     } finally {
@@ -20,24 +23,27 @@ export function useAutores() {
 
   async function create(payload) {
     const novo = await api.create(payload)
-    autores.value.push(novo)
+    await fetchPaginado(1)
     notify('Autor cadastrado com sucesso.')
     return novo
   }
 
   async function update(id, payload) {
     const atualizado = await api.update(id, payload)
-    const idx = autores.value.findIndex(a => a.id === id)
-    if (idx !== -1) autores.value[idx] = atualizado
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Autor atualizado com sucesso.')
     return atualizado
   }
 
   async function remove(id) {
     await api.remove(id)
-    autores.value = autores.value.filter(a => a.id !== id)
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Autor removido com sucesso.')
   }
 
-  return { autores, loading, fetchAll, create, update, remove }
+  async function fetchTodos() {
+    autores.value = await api.getTodos()
+  }
+
+  return { autores, pagination, loading, fetchPaginado, fetchTodos, create, update, remove }
 }

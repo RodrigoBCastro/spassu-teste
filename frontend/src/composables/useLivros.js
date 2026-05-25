@@ -8,10 +8,10 @@ export function useLivros() {
   const loading = ref(false)
   const { notify } = useNotification()
 
-  async function fetchAll(page = 1) {
+  async function fetchPaginado(page = 1, perPage = pagination.value?.per_page ?? 15) {
     loading.value = true
     try {
-      const res = await api.getAll(page)
+      const res = await api.getPaginado(page, perPage)
       livros.value = res.data
       pagination.value = res.meta
     } catch {
@@ -23,22 +23,22 @@ export function useLivros() {
 
   async function create(payload) {
     const novo = await api.create(payload)
-    await fetchAll()
+    await fetchPaginado(1)
     notify('Livro cadastrado com sucesso.')
     return novo
   }
 
   async function update(id, payload) {
     await api.update(id, payload)
-    await fetchAll(pagination.value?.current_page ?? 1)
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Livro atualizado com sucesso.')
   }
 
   async function remove(id) {
     await api.remove(id)
-    await fetchAll(pagination.value?.current_page ?? 1)
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Livro removido com sucesso.')
   }
 
-  return { livros, pagination, loading, fetchAll, create, update, remove }
+    return { livros, pagination, loading, fetchPaginado, create, update, remove }
 }
