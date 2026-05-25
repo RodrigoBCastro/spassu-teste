@@ -1,0 +1,816 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Cadastro de Livros API",
+        "description": "API REST para gerenciamento de livros, autores e assuntos.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1"
+        }
+    ],
+    "paths": {
+        "/assuntos": {
+            "get": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Listar assuntos",
+                "operationId": "b65bfc4a125a8df880e922c685bb247b",
+                "responses": {
+                    "200": {
+                        "description": "Lista de assuntos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Assunto"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Criar assunto",
+                "operationId": "2e7489bfd9849f0707489d0f09c8263a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssuntoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Assunto criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Assunto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/assuntos/{id}": {
+            "get": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Buscar assunto",
+                "operationId": "75184321a3ffcd363b75f3e8bd451468",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Assunto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Assunto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Atualizar assunto",
+                "operationId": "3f9c17df8d02b0b4e11917bce2a048e0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssuntoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Assunto atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Assunto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Assuntos"
+                ],
+                "summary": "Remover assunto",
+                "operationId": "513e9acbc689a6e5f0855eb11ea43909",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Removido"
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    },
+                    "422": {
+                        "description": "Assunto vinculado a livros"
+                    }
+                }
+            }
+        },
+        "/autores": {
+            "get": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Listar autores",
+                "operationId": "eb27430fea956ab5ff5aaca0e1355868",
+                "responses": {
+                    "200": {
+                        "description": "Lista de autores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Autor"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Criar autor",
+                "operationId": "79b1e52e74880ae8637d083d4705c17d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AutorInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Autor criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Autor"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/autores/{id}": {
+            "get": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Buscar autor",
+                "operationId": "dd01080f500d7bbcb4d41eba034ebbff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Autor encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Autor"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Atualizar autor",
+                "operationId": "9dc6b2621eb50caac0dc2bcd21888aa8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AutorInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Autor atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Autor"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Autores"
+                ],
+                "summary": "Remover autor",
+                "operationId": "fe487831afee2422c6afc92243a36d1a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Removido"
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    },
+                    "422": {
+                        "description": "Autor vinculado a livros"
+                    }
+                }
+            }
+        },
+        "/livros": {
+            "get": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Listar livros",
+                "operationId": "c2638f778b25c161b5b8189172216b67",
+                "responses": {
+                    "200": {
+                        "description": "Lista de livros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Livro"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Criar livro",
+                "operationId": "052dc25bf67cc3710e476ca8c1f49397",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivroInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livro criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Livro"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/livros/{id}": {
+            "get": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Buscar livro",
+                "operationId": "5ee1c89a5977dcbe47813c762d44c15f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livro encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Livro"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Atualizar livro",
+                "operationId": "34f924b16d17d726283baad63b144290",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LivroInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Livro atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Livro"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Livros"
+                ],
+                "summary": "Remover livro",
+                "operationId": "20ff1e31d004d5d38f9e8c62a3568b1f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Removido"
+                    },
+                    "404": {
+                        "description": "Não encontrado"
+                    }
+                }
+            }
+        },
+        "/relatorio/livros-por-autor": {
+            "get": {
+                "tags": [
+                    "Relatório"
+                ],
+                "summary": "Livros agrupados por autor",
+                "operationId": "ab495eb2f15bcc5ddb391ab0e2449b1d",
+                "responses": {
+                    "200": {
+                        "description": "Relatório gerado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RelatorioAutor"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Autor": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nome": {
+                        "type": "string",
+                        "example": "Machado de Assis"
+                    }
+                },
+                "type": "object"
+            },
+            "AutorInput": {
+                "required": [
+                    "nome"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Machado de Assis",
+                        "maxLength": 40
+                    }
+                },
+                "type": "object"
+            },
+            "Assunto": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Romance"
+                    }
+                },
+                "type": "object"
+            },
+            "AssuntoInput": {
+                "required": [
+                    "descricao"
+                ],
+                "properties": {
+                    "descricao": {
+                        "type": "string",
+                        "example": "Romance",
+                        "maxLength": 100
+                    }
+                },
+                "type": "object"
+            },
+            "Livro": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "example": "Dom Casmurro"
+                    },
+                    "editora": {
+                        "type": "string",
+                        "example": "Garnier"
+                    },
+                    "edicao": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ano_publicacao": {
+                        "type": "string",
+                        "example": "1899"
+                    },
+                    "valor": {
+                        "type": "string",
+                        "example": "29.90"
+                    },
+                    "autores": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Autor"
+                        }
+                    },
+                    "assuntos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Assunto"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "LivroInput": {
+                "required": [
+                    "titulo",
+                    "editora",
+                    "edicao",
+                    "ano_publicacao",
+                    "valor",
+                    "autores_ids",
+                    "assuntos_ids"
+                ],
+                "properties": {
+                    "titulo": {
+                        "type": "string",
+                        "example": "Dom Casmurro",
+                        "maxLength": 40
+                    },
+                    "editora": {
+                        "type": "string",
+                        "example": "Garnier",
+                        "maxLength": 40
+                    },
+                    "edicao": {
+                        "type": "integer",
+                        "example": 1,
+                        "minimum": 1
+                    },
+                    "ano_publicacao": {
+                        "type": "string",
+                        "example": "1899"
+                    },
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 29.9,
+                        "minimum": 0
+                    },
+                    "autores_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "example": [
+                            1,
+                            2
+                        ]
+                    },
+                    "assuntos_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "example": [
+                            1
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "RelatorioLivro": {
+                "properties": {
+                    "cod_l": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "example": "Dom Casmurro"
+                    },
+                    "editora": {
+                        "type": "string",
+                        "example": "Garnier"
+                    },
+                    "edicao": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ano_publicacao": {
+                        "type": "string",
+                        "example": "1899"
+                    },
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 29.9
+                    },
+                    "assuntos": {
+                        "type": "string",
+                        "example": "Romance, Realismo"
+                    }
+                },
+                "type": "object"
+            },
+            "RelatorioAutor": {
+                "properties": {
+                    "cod_au": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "autor_nome": {
+                        "type": "string",
+                        "example": "Machado de Assis"
+                    },
+                    "livros": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RelatorioLivro"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autores",
+            "description": "CRUD de autores"
+        },
+        {
+            "name": "Assuntos",
+            "description": "CRUD de assuntos"
+        },
+        {
+            "name": "Livros",
+            "description": "CRUD de livros"
+        },
+        {
+            "name": "Relatório",
+            "description": "Relatório de livros por autor"
+        }
+    ]
+}
