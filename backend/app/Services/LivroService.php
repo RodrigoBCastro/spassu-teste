@@ -6,6 +6,7 @@ use App\DTOs\LivroDTO;
 use App\Models\Livro;
 use App\Repositories\Contracts\LivroRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 readonly class LivroService
 {
@@ -13,9 +14,15 @@ readonly class LivroService
         private LivroRepositoryContract $repository,
     ) {}
 
-    public function listar(int $perPage = 15): LengthAwarePaginator
+    public function listar(): LengthAwarePaginator
     {
+        $perPage = request()->integer('per_page', 15);
         return $this->repository->paginate($perPage);
+    }
+
+    public function listarTodos(): Collection
+    {
+        return $this->repository->findAll();
     }
 
     public function buscar(int $id): Livro

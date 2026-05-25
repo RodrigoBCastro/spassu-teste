@@ -17,14 +17,28 @@ class AssuntoController extends Controller
         private readonly AssuntoService $service,
     ) {}
 
-    #[OA\Get(path: '/assuntos', summary: 'Listar assuntos', tags: ['Assuntos'],
-        responses: [new OA\Response(response: 200, description: 'Lista de assuntos',
+    #[OA\Get(path: '/assuntos', summary: 'Listar assuntos (paginado)', tags: ['Assuntos'],
+        parameters: [new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1))],
+        responses: [new OA\Response(response: 200, description: 'Lista paginada de assuntos',
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Assunto')),
+                new OA\Property(property: 'meta', type: 'object'),
+            ])
+        )]
+    )]
+    public function index(): AnonymousResourceCollection
+    {
+        return AssuntoResource::collection($this->service->listar());
+    }
+
+    #[OA\Get(path: '/assuntos/todos', summary: 'Listar todos os assuntos sem paginação', tags: ['Assuntos'],
+        responses: [new OA\Response(response: 200, description: 'Lista completa de assuntos',
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Assunto')),
             ])
         )]
     )]
-    public function index(): AnonymousResourceCollection
+    public function todos(): AnonymousResourceCollection
     {
         return AssuntoResource::collection($this->service->listarTodos());
     }
