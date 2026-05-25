@@ -2,10 +2,11 @@
 import { ref, onMounted } from 'vue'
 import { useAssuntos } from '@/composables/useAssuntos'
 import { useNotification } from '@/composables/useNotification'
+import DataTable from '@/components/base/DataTable.vue'
 import AssuntoModal from './AssuntoModal.vue'
 import ConfirmModal from '@/components/base/ConfirmModal.vue'
 
-const { assuntos, loading, fetchAll, create, update, remove } = useAssuntos()
+const { assuntos, pagination, loading, fetchPaginado, create, update, remove } = useAssuntos()
 const { notify } = useNotification()
 
 const showModal = ref(false)
@@ -13,7 +14,12 @@ const showConfirm = ref(false)
 const editing = ref(null)
 const deletingId = ref(null)
 
-onMounted(fetchAll)
+const columns = [
+  { key: 'id', label: '#', width: '60px', class: 'text-muted' },
+  { key: 'descricao', label: 'Descrição' },
+]
+
+onMounted(fetchPaginado)
 
 function openCreate() {
   editing.value = null
@@ -58,42 +64,31 @@ async function onConfirmDelete() {
   <div>
     <div class="section-header">
       <h4>Assuntos</h4>
-      <button class="btn btn-primary btn-sm" title="Adicionar" @click="openCreate"><span class="mdi mdi-plus"></span></button>
+      <button class="btn btn-primary btn-sm" title="Adicionar" @click="openCreate">
+        <span class="mdi mdi-plus"></span>
+      </button>
     </div>
 
-    <div v-if="loading" class="loading-state">Carregando...</div>
+    <DataTable
+      :columns="columns"
+      :rows="assuntos"
+      :pagination="pagination"
+      :loading="loading"
+      empty-message="Nenhum assunto cadastrado."
+      @page-change="(page) => fetchPaginado(page)"
+      @per-page-change="(perPage) => fetchPaginado(1, perPage)"
+    >
+      <template #actions="{ row }">
+        <button class="dt-btn-action" title="Editar" @click="openEdit(row)">
+          <span class="mdi mdi-pencil-outline"></span>
+        </button>
+        <button class="dt-btn-action dt-btn-action--danger" title="Excluir" @click="askDelete(row.id)">
+          <span class="mdi mdi-trash-can-outline"></span>
+        </button>
+      </template>
+    </DataTable>
 
-    <div v-else-if="assuntos.length === 0" class="empty-state">
-      Nenhum assunto cadastrado.
-    </div>
-
-    <div v-else class="table-wrapper">
-      <table class="table table-hover mb-0">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Descrição</th>
-            <th class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="assunto in assuntos" :key="assunto.id">
-            <td class="text-muted" style="width:60px">{{ assunto.id }}</td>
-            <td>{{ assunto.descricao }}</td>
-            <td class="text-end" style="width:120px">
-              <button class="btn-action btn btn-sm btn-outline-secondary me-1" title="Editar" @click="openEdit(assunto)">
-                <span class="mdi mdi-pencil-outline"></span>
-              </button>
-              <button class="btn-action btn btn-sm btn-outline-danger" title="Excluir" @click="askDelete(assunto.id)">
-                <span class="mdi mdi-trash-can-outline"></span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <AssuntoModal v-if="showModal" :assunto="editing" @save="onSave" @cancel="showModal = false"/>
-    <ConfirmModal v-if="showConfirm" @confirm="onConfirmDelete" @cancel="showConfirm = false"/>
+    <AssuntoModal v-if="showModal" :assunto="editing" @save="onSave" @cancel="showModal = false" />
+    <ConfirmModal v-if="showConfirm" @confirm="onConfirmDelete" @cancel="showConfirm = false" />
   </div>
 </template>

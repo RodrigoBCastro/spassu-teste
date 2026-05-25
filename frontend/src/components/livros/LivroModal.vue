@@ -1,20 +1,25 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 
 const props = defineProps({
   livro: { type: Object, default: null },
   autores: { type: Array, default: () => [] },
-  assuntos:{ type: Array, default: () => [] },
+  assuntos: { type: Array, default: () => [] },
 })
 const emit = defineEmits(['save', 'cancel'])
 
 const form = ref({
   titulo: '', editora: '', edicao: 1,
-  ano_publicacao: '', valor: '',
+  ano_publicacao: '',
   autores_ids: [], assuntos_ids: [],
 })
+const valorDisplay = ref('')
 const errors = ref({})
+
+function formatValor(num) {
+  return (num || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 
 watch(() => props.livro, (val) => {
   if (val) {
@@ -23,28 +28,33 @@ watch(() => props.livro, (val) => {
       editora: val.editora,
       edicao: val.edicao,
       ano_publicacao: val.ano_publicacao,
-      valor: val.valor,
       autores_ids: val.autores?.map(a => a.id) ?? [],
       assuntos_ids: val.assuntos?.map(a => a.id) ?? [],
     }
+    valorDisplay.value = formatValor(val.valor)
   } else {
     form.value = {
       titulo: '', editora: '', edicao: 1,
-      ano_publicacao: '', valor: '',
+      ano_publicacao: '',
       autores_ids: [], assuntos_ids: [],
     }
+    valorDisplay.value = ''
   }
   errors.value = {}
 }, { immediate: true })
 
-const valorFormatado = computed({
-  get() {
-    return form.value.valor
-  },
-  set(v) {
-    form.value.valor = v.replace(/[^0-9.,]/g, '').replace(',', '.')
-  },
-})
+function onValorInput(event) {
+  const digits = event.target.value.replace(/\D/g, '')
+  const centavos = parseInt(digits || '0', 10)
+  const formatted = centavos > 0 ? formatValor(centavos / 100) : ''
+  valorDisplay.value = formatted
+  event.target.value = formatted
+  event.target.setSelectionRange(formatted.length, formatted.length)
+}
+
+function getValorNumerico() {
+  return parseFloat(valorDisplay.value.replace(/\./g, '').replace(',', '.')) || 0
+}
 
 function validate() {
   const e = {}
@@ -52,7 +62,8 @@ function validate() {
   if (!form.value.editora.trim()) e.editora = 'Obrigatório.'
   if (!form.value.edicao || form.value.edicao < 1) e.edicao = 'Deve ser >= 1.'
   if (!/^\d{4}$/.test(form.value.ano_publicacao)) e.ano_publicacao = 'Deve ter 4 dígitos.'
-  if (!form.value.valor || isNaN(parseFloat(form.value.valor))) e.valor = 'Valor inválido.'
+  else if (parseInt(form.value.ano_publicacao) > new Date().getFullYear()) e.ano_publicacao = 'Ano não pode ser futuro.'
+  if (getValorNumerico() <= 0) e.valor = 'Valor inválido.'
   if (form.value.autores_ids.length === 0) e.autores_ids = 'Selecione ao menos um autor.'
   if (form.value.assuntos_ids.length === 0) e.assuntos_ids = 'Selecione ao menos um assunto.'
   errors.value = e
@@ -66,7 +77,7 @@ function submit() {
     editora: form.value.editora.trim(),
     edicao: Number(form.value.edicao),
     ano_publicacao: form.value.ano_publicacao,
-    valor: parseFloat(String(form.value.valor).replace(',', '.')),
+    valor: getValorNumerico(),
     autores_ids: form.value.autores_ids,
     assuntos_ids: form.value.assuntos_ids,
   })
@@ -96,7 +107,7 @@ function submit() {
 
       <div class="col-md-3">
         <label class="form-label">Ano <span class="text-danger">*</span></label>
-        <input v-model="form.ano_publicacao" type="text" maxlength="4" class="form-control" :class="{'is-invalid': errors.ano_publicacao}" placeholder="AAAA" />
+        <input :value="form.ano_publicacao" @input="e => form.ano_publicacao = e.target.value.replace(/\D/g, '').slice(0, 4)" type="text" inputmode="numeric" maxlength="4" class="form-control" :class="{'is-invalid': errors.ano_publicacao}" placeholder="AAAA" />
         <div class="invalid-feedback">{{ errors.ano_publicacao }}</div>
       </div>
 
@@ -104,7 +115,7 @@ function submit() {
         <label class="form-label">Valor (R$) <span class="text-danger">*</span></label>
         <div class="input-group">
           <span class="input-group-text">R$</span>
-          <input v-model="valorFormatado" type="text" inputmode="decimal" class="form-control" :class="{'is-invalid': errors.valor}" placeholder="0,00" />
+          <input :value="valorDisplay" @input="onValorInput" type="text" inputmode="numeric" class="form-control" :class="{'is-invalid': errors.valor}" placeholder="0,00" />
           <div class="invalid-feedback">{{ errors.valor }}</div>
         </div>
       </div>

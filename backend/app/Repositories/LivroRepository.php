@@ -6,6 +6,7 @@ use App\DTOs\LivroDTO;
 use App\Models\Livro;
 use App\Repositories\Contracts\LivroRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class LivroRepository implements LivroRepositoryContract
@@ -15,6 +16,11 @@ class LivroRepository implements LivroRepositoryContract
         return Livro::with(['autores', 'assuntos'])
             ->orderBy('titulo')
             ->paginate($perPage);
+    }
+
+    public function findAll(): Collection
+    {
+        return Livro::with(['autores', 'assuntos'])->orderBy('titulo')->get();
     }
 
     public function findById(int $id): Livro

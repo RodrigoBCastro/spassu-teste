@@ -17,16 +17,30 @@ class LivroController extends Controller
         private readonly LivroService $service,
     ) {}
 
-    #[OA\Get(path: '/livros', summary: 'Listar livros', tags: ['Livros'],
-        responses: [new OA\Response(response: 200, description: 'Lista de livros',
+    #[OA\Get(path: '/livros', summary: 'Listar livros (paginado)', tags: ['Livros'],
+        parameters: [new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1))],
+        responses: [new OA\Response(response: 200, description: 'Lista paginada de livros',
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Livro')),
+                new OA\Property(property: 'meta', type: 'object'),
             ])
         )]
     )]
     public function index(): AnonymousResourceCollection
     {
         return LivroResource::collection($this->service->listar());
+    }
+
+    #[OA\Get(path: '/livros/todos', summary: 'Listar todos os livros sem paginação', tags: ['Livros'],
+        responses: [new OA\Response(response: 200, description: 'Lista completa de livros',
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Livro')),
+            ])
+        )]
+    )]
+    public function todos(): AnonymousResourceCollection
+    {
+        return LivroResource::collection($this->service->listarTodos());
     }
 
     #[OA\Post(path: '/livros', summary: 'Criar livro', requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/LivroInput')),

@@ -4,13 +4,16 @@ import { useNotification } from './useNotification'
 
 export function useAssuntos() {
   const assuntos = ref([])
+  const pagination = ref(null)
   const loading = ref(false)
   const { notify } = useNotification()
 
-  async function fetchAll() {
+  async function fetchPaginado(page = 1, perPage = pagination.value?.per_page ?? 15) {
     loading.value = true
     try {
-      assuntos.value = await api.getAll()
+      const res = await api.getPaginado(page, perPage)
+      assuntos.value = res.data
+      pagination.value = res.meta
     } catch {
       notify('Erro ao carregar assuntos.', 'error')
     } finally {
@@ -20,24 +23,27 @@ export function useAssuntos() {
 
   async function create(payload) {
     const novo = await api.create(payload)
-    assuntos.value.push(novo)
+    await fetchPaginado(1)
     notify('Assunto cadastrado com sucesso.')
     return novo
   }
 
   async function update(id, payload) {
     const atualizado = await api.update(id, payload)
-    const idx = assuntos.value.findIndex(a => a.id === id)
-    if (idx !== -1) assuntos.value[idx] = atualizado
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Assunto atualizado com sucesso.')
     return atualizado
   }
 
   async function remove(id) {
     await api.remove(id)
-    assuntos.value = assuntos.value.filter(a => a.id !== id)
+    await fetchPaginado(pagination.value?.current_page ?? 1)
     notify('Assunto removido com sucesso.')
   }
 
-  return { assuntos, loading, fetchAll, create, update, remove }
+  async function fetchTodos() {
+    assuntos.value = await api.getTodos()
+  }
+
+  return { assuntos, pagination, loading, fetchPaginado, fetchTodos, create, update, remove }
 }
