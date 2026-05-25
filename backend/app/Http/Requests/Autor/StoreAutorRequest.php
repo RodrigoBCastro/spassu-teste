@@ -9,7 +9,7 @@ class StoreAutorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' => ['required', 'string', 'max:40'],
+            'nome' => ['required', 'string', 'max:40', 'unique:autores,nome'],
         ];
     }
 }
