@@ -9,7 +9,7 @@ class StoreAssuntoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'descricao' => ['required', 'string', 'max:100'],
+            'descricao' => ['required', 'string', 'max:100', 'unique:assuntos,descricao'],
         ];
     }
 }
