@@ -21,3 +21,6 @@ cd ..
 
 # otimiza Laravel
 php artisan optimize
+
+# gera documentação Swagger
+php artisan l5-swagger:generate
