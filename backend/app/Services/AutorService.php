@@ -42,6 +42,12 @@ readonly class AutorService
 
     public function remover(int $id): void
     {
+        $autor = $this->repository->findById($id);
+
+        if ($autor->livros()->exists()) {
+            abort(422, 'Não é possível remover um autor vinculado a livros.');
+        }
+
         $this->repository->delete($id);
     }
 }
