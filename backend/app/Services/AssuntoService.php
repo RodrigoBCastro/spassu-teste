@@ -42,6 +42,12 @@ readonly class AssuntoService
 
     public function remover(int $id): void
     {
+        $assunto = $this->repository->findById($id);
+
+        if ($assunto->livros()->exists()) {
+            abort(422, 'Não é possível remover um assunto vinculado a livros.');
+        }
+
         $this->repository->delete($id);
     }
 }
